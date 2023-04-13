@@ -37,7 +37,7 @@ back_button = InlineKeyboardMarkup().add(InlineKeyboardButton("Назад", call
 # Messages and button descriptions
 WELCOME_MESSAGE = (
     "Привет! 😃 Я бот школы искусств и творчества CoolScool. "
-    "Выберите один из пунктов меню, чтобы узнать больше:"
+    "Выберите один из пунктов меню, чтобы узнать больше"
 )
 
 
@@ -96,6 +96,7 @@ async def process_callback_back_to_main(callback_query: CallbackQuery):
     
     # Отвечаем на callback query, чтобы она не оставалась висеть
     await bot.answer_callback_query(callback_query.id)
+    
 if __name__ == '__main__':
     executor.start_polling(dp, skip_updates=True)
 
