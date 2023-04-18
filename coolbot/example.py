@@ -15,7 +15,7 @@ dp = Dispatcher(bot)
 # Callback data
 menu_cb = CallbackData("menu", "action")
 back_cb = CallbackData("back", "main_menu")
-
+myact_cb = CallbackData("myact", "action")
 # Menu items
 menu_items: Dict[str, str] = {
     "program": "Программа 📚",
@@ -24,6 +24,16 @@ menu_items: Dict[str, str] = {
     "question": "Задать вопрос 🤔",
     "myact": "Подать заявку 📝",
 }
+
+menu_items: Dict[str, str] = {
+    "program": "Программа 📚",
+    "place": "Место 📍",
+    "price": "Цена 💰",
+    "question": "Задать вопрос 🤔",
+    "myact": "Подать заявку 📝",
+}
+
+
 
 # Inline keyboard
 inline_keyboard = InlineKeyboardMarkup(row_width=2)
@@ -34,20 +44,23 @@ for action, description in menu_items.items():
 # Back button
 back_button = InlineKeyboardMarkup().add(InlineKeyboardButton("Назад", callback_data=back_cb.new(main_menu="main")))
 
+#Myact button
+myact_keyboard = InlineKeyboardMarkup(row_width=2)
+for action, description in menu_items.items():
+    if action.startswith("myact"):
+        button = InlineKeyboardButton(description, callback_data=myact_cb.new(action=action))
+        myact_keyboard.add(button)
+
 # Messages and button descriptions
 WELCOME_MESSAGE = (
     "Привет! 😃 Я бот школы искусств и творчества CoolScool. "
     "Выберите один из пунктов меню, чтобы узнать больше:"
 )
-
-
-PROGRAM_MESSAGE = "Программа CoolScool 📚: ..."
+PROGRAM_MESSAGE = "Программа CoolScool 📚: \n 1. Математика\n 2. Керамика\n 3. Труды\n 4. Вышивание\n 5. Английский\n 6. Музыка\n 7. Паркур\n 8. Барабаны"
 PLACE_MESSAGE = "Адрес CoolScool 📍: Koh Phangan 🌴🌊"
 PRICE_MESSAGE = "Цены на занятия в CoolScool 💰: ..."
-QUESTION_MESSAGE = "Если у вас есть вопросы, свяжитесь с нами по телефону 📞: ..."
-MYACT_MESSAGE = "Подать заявку на обучение 📝: ..."
-
-MYACT_MESSAGE = "Чтобы подать заявку на обучение, заполните форму на нашем сайте: ..."
+QUESTION_MESSAGE = "Если у вас есть вопросы, свяжитесь с нами по телефону 📞"
+MYACT_MESSAGE = "Чтобы подать заявку на обучение, заполните форму для дальнейшей связи с нами."
 DESCRIPTIONS = {
     "program": PROGRAM_MESSAGE,
     "place": PLACE_MESSAGE,
@@ -73,6 +86,11 @@ async def process_callback_menu(callback_query: CallbackQuery, callback_data: di
     # Получаем выбранный пункт меню и соответствующее описание
     action = callback_data["action"]
     description = DESCRIPTIONS[action]
+
+    if action == "myact":
+        keyboard = myact_keyboard
+    else:
+        keyboard = back_button
     
     # Редактируем сообщение с выбранным пунктом меню и добавляем кнопку "Назад"
     message = await bot.edit_message_text(chat_id=callback_query.message.chat.id,
@@ -96,6 +114,10 @@ async def process_callback_back_to_main(callback_query: CallbackQuery):
     
     # Отвечаем на callback query, чтобы она не оставалась висеть
     await bot.answer_callback_query(callback_query.id)
+
+
+
+
 if __name__ == '__main__':
     executor.start_polling(dp, skip_updates=True)
 
