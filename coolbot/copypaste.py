@@ -56,35 +56,8 @@ async def cmd_start(message: types.Message):
     # переводим бота в состояние child_name для получения имени ребенка
     await ApplicationForm.child_name.set()
 
-# создаем функцию-обработчик текстовых сообщений
-@dp.message_handler(state=ApplicationForm.child_name)
-async def process_child_name(message: types.Message, state: FSMContext):
-    """
-    Обработчик для получения имени ребенка
-    """
-    # сохраняем имя ребенка в состояние
-    await state.update_data(child_name=message.text)
-
-    # переводим бота в состояние child_gender для получения пола ребенка
-    await ApplicationForm.child_gender.set()
-    await bot.send_message(chat_id=message.chat.id,\
-                            text="Укажите, пожалуйста, пол ребенка (мальчик или девочка)",\
-                            reply_markup=gender_keyboard)
 
 
-
-# создаем обработчик для нажатий на кнопки выбора пола
-@dp.message_handler(Text(equals=['Мальчик', 'Девочка']), state=ApplicationForm.child_gender)
-async def process_gender_choice(message: types.Message, state: FSMContext):
-    # получаем текст нажатой кнопки
-    gender = message.text
-
-    # сохраняем пол ребенка в состояние
-    await state.update_data(child_gender=gender)
-#    # переводим бота в состояние parent_name для получения имени родителя
-    await ApplicationForm.parent_name.set()
-    await bot.send_message(chat_id=message.chat.id,\
-                        reply_markup=ReplyKeyboardRemove())
 
 
 
