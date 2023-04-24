@@ -5,7 +5,6 @@ from aiogram.types import CallbackQuery, InlineKeyboardButton, InlineKeyboardMar
 from aiogram.utils.callback_data import CallbackData
 from aiogram.contrib.fsm_storage.memory import MemoryStorage
 from aiogram.dispatcher import FSMContext
-from aiogram.dispatcher.filters import Text
 from aiogram.dispatcher.filters.state import State, StatesGroup
 from aiogram.types import ParseMode, ReplyKeyboardMarkup, KeyboardButton, ReplyKeyboardRemove
 from aiogram.contrib.fsm_storage.memory import MemoryStorage
@@ -109,7 +108,6 @@ async def process_start_command(message: types.Message):
     Handle the /start and /help commands
     """
     # Отправляем приветственное сообщение и инлайн-клавиатуру
-    
     await message.answer(WELCOME_MESSAGE, reply_markup=inline_keyboard)
 
 
@@ -142,14 +140,14 @@ async def process_callback_menu(callback_query: CallbackQuery, callback_data: di
         await bot.send_message(chat_id=callback_query.message.chat.id, text="Для того чтобы  начать заполнять анкету введите имя ребенка")
 
     else:
-        keyboard = back_button
-        description = "Данные о вашем ребенке уже есть"
+
         # Редактируем сообщение с выбранным пунктом меню и добавляем кнопку "Назад"
 
     # Отвечаем на callback query, чтобы она не оставалась висеть
-    await bot.edit_message_text(chat_id=callback_query.message.chat.id,\
+        await bot.edit_message_text(chat_id=callback_query.message.chat.id,\
                                 message_id=callback_query.message.message_id,\
                                 text=description,\
+                                reply_markup=back_button
                               )
 
 
@@ -163,7 +161,7 @@ async def process_child_name(message: types.Message, state: FSMContext):
     await ApplicationForm.child_gender.set()
 
     # Отправляем сообщение для получения пола ребенка
-    await message.answer("Укажите пол ребенка", reply_markup=gender_keyboard)
+    await message.answer("Укажите пол ребенка", reply_markup = gender_keyboard)
 
 
 
@@ -173,12 +171,13 @@ async def process_child_gender(message: types.Message, state: FSMContext):
     """
     Обработчик для получения пола ребенка
     """
+    await message.answer(text='', reply_markup=types.ReplyKeyboardRemove())
     # сохраняем пол ребенка в состояние
     await state.update_data(child_gender=message.text)
     
     # переводим бота в состояние parent_name для получения имени родителя
     await ApplicationForm.parent_name.set()    
-    await message.answer(text='', reply_markup=types.ReplyKeyboardRemove())
+    
     await bot.send_message(chat_id=message.chat.id, text="Введите, пожалуйста, имя и фамилию родителя")
 
 
