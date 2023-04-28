@@ -64,8 +64,7 @@ async def process_callback_menu(callback_query: CallbackQuery, callback_data: di
     if action == "myact":
         await bot.edit_message_text(chat_id=callback_query.message.chat.id,\
                                     message_id=callback_query.message.message_id,\
-                                    text="Для того чтобы  начать заполнять анкету\
-                                        и записаться на занятия напишите да, если хотите отменить, то  /cancel")
+                                    text=MYACT_MESSAGE)
         # удаляем инлайн-клавиатуру
         await bot.edit_message_reply_markup(chat_id=callback_query.message.chat.id,
                                     message_id=callback_query.message.message_id,
@@ -111,7 +110,7 @@ async def cmd_cancel(message: types.Message, state: FSMContext):
 async def process_child_name(message: types.Message, state: FSMContext):
     # Сохраняем имя ребенка в стейте
     await state.update_data(child_name=message.text)
-    await message.answer("Укажите пол ребенка", reply_markup = gender_keyboard)
+    await message.answer("Укажите пол ребенка ", reply_markup = gender_keyboard)
     # Переводим бота в состояние для получения пола ребенка
     await ApplicationForm.child_gender.set()
 
