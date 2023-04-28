@@ -68,7 +68,8 @@ async def process_callback_menu(callback_query: CallbackQuery, callback_data: di
     if action == "myact":
         await bot.edit_message_text(chat_id=callback_query.message.chat.id,\
                                     message_id=callback_query.message.message_id,\
-                                    text="Для того чтобы  начать заполнять анкету  и записаться на занятия напишите да")
+                                    text="Для того чтобы  начать заполнять анкету\
+                                        и записаться на занятия напишите да, если хотите отменить, то  /cancel")
         # удаляем инлайн-клавиатуру
         await bot.edit_message_reply_markup(chat_id=callback_query.message.chat.id,
                                     message_id=callback_query.message.message_id,
@@ -87,9 +88,13 @@ async def start_application_form(message: types.Message):
     """
     Обработчик для запуска анкеты
     """
+    # Удаляем предыдущее сообщение с инлайн-клавиатурой
+    await bot.delete_message(chat_id=message.chat.id, message_id=message.message_id-1)
+
     # Отправляем сообщение о начале заполнения анкеты
     await bot.send_message(chat_id=message.chat.id, text="Отлично, начнем заполнение анкеты!")
     # переводим бота в состояние child_name для получения имени ребенка
+
     await ApplicationForm.child_name.set()
     await message.answer("Укажите имя вашего чада", reply_markup=types.ReplyKeyboardRemove())
 
@@ -98,6 +103,8 @@ async def cmd_cancel(message: types.Message, state: FSMContext):
     """
     Обработчик команды /cancel для отмены заполнения заявки
     """
+    # Удаляем предыдущее сообщение с инлайн-клавиатурой
+    await bot.delete_message(chat_id=message.chat.id, message_id=message.message_id-1)
     # отменяем текущее состояние
     await state.finish()
     # отправляем сообщение пользователю о том, что заявка отменена
@@ -153,7 +160,8 @@ async def process_parent_contact(message: types.Message, state: FSMContext):
                        f"Имя ребенка: {data['child_name']}\n" \
                        f"Пол ребенка: {data['child_gender']}\n" \
                        f"Имя родителя: {data['parent_name']}\n" \
-                       f"Контакт родителя: {data['parent_contact']}"
+                       f"Контакт родителя: {data['parent_contact']}\
+                       для перехода в главное меню нажми /start"
         # Отправляем сообщение с полученными данными
         # отправляем данные заявки администратору
         await bot.send_message(chat_id = "@mposenddata",\
