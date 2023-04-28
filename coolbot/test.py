@@ -28,10 +28,6 @@ class ApplicationForm(StatesGroup):
     child_gender = State()  # состояние для пола ребенка
     parent_contact = State()  # состояние для имени родителя
 
-async def start_handler(message: types.Message, state: FSMContext):
-    await state.set_state(ApplicationForm.child_name) # устанавливаем состояние для имени ребенка
-    await message.answer("Введите имя ребенка")
-
 
 @dp.message_handler(commands=['start', 'help'])
 async def process_start_command(message: types.Message):
@@ -83,6 +79,7 @@ async def process_callback_menu(callback_query: CallbackQuery, callback_data: di
                                 reply_markup=back_button
                                 )
 
+
 @dp.message_handler(lambda message: message.text.lower() in ['да', 'ок', 'угу'])
 async def start_application_form(message: types.Message):
     """
@@ -90,11 +87,9 @@ async def start_application_form(message: types.Message):
     """
     # Удаляем предыдущее сообщение с инлайн-клавиатурой
     await bot.delete_message(chat_id=message.chat.id, message_id=message.message_id-1)
-
     # Отправляем сообщение о начале заполнения анкеты
     await bot.send_message(chat_id=message.chat.id, text="Отлично, начнем заполнение анкеты!")
     # переводим бота в состояние child_name для получения имени ребенка
-
     await ApplicationForm.child_name.set()
     await message.answer("Укажите имя вашего чада", reply_markup=types.ReplyKeyboardRemove())
 
@@ -108,7 +103,8 @@ async def cmd_cancel(message: types.Message, state: FSMContext):
     # отменяем текущее состояние
     await state.finish()
     # отправляем сообщение пользователю о том, что заявка отменена
-    await bot.send_message(chat_id=message.chat.id, text="Заявка отменена. Для начала заполнения новой заявки введите /start")
+    await bot.send_message(chat_id=message.chat.id, text="Заявка отменена.\
+                            Для начала заполнения новой заявки введите /start")
 
 # Обработчик, который вызывается при отправке имени ребенка
 @dp.message_handler(state=ApplicationForm.child_name)
@@ -118,8 +114,6 @@ async def process_child_name(message: types.Message, state: FSMContext):
     await message.answer("Укажите пол ребенка", reply_markup = gender_keyboard)
     # Переводим бота в состояние для получения пола ребенка
     await ApplicationForm.child_gender.set()
-
-
 
 # создаем функцию-обработки полученного сообщения
 @dp.message_handler(state=ApplicationForm.child_gender)
@@ -171,8 +165,8 @@ async def process_parent_contact(message: types.Message, state: FSMContext):
                                Имя родителя:{data['parent_name']}\n\
                                Контакт родителя: {data['parent_contact']}")
         # отправляем сообщение пользователю о том, что заявка успешно отправлена
-        await bot.send_message(chat_id=message.chat.id, text=f"Спасибо! Ваша заявка отправлена. Мы свяжемся с Вами в ближайшее время.\n\
-                                {message_text}")
+        await bot.send_message(chat_id=message.chat.id, text=f"Спасибо! Ваша заявка отправлена.\
+                            Мы свяжемся с Вами в ближайшее время.\n {message_text}")
         # Завершаем состояние и сбрасываем стейт
         await state.finish()
     else:
