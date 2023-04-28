@@ -154,7 +154,7 @@ async def process_parent_contact(message: types.Message, state: FSMContext):
                        f"Пол ребенка: {data['child_gender']}\n" \
                        f"Имя родителя: {data['parent_name']}\n" \
                        f"Контакт родителя: {data['parent_contact']}\
-                       для перехода в главное меню нажми /start"
+                       \nДля перехода в главное меню нажми /start"
         # Отправляем сообщение с полученными данными
         # отправляем данные заявки администратору
         await bot.send_message(chat_id = "@mposenddata",\
@@ -164,13 +164,13 @@ async def process_parent_contact(message: types.Message, state: FSMContext):
                                Имя родителя:{data['parent_name']}\n\
                                Контакт родителя: {data['parent_contact']}")
         # отправляем сообщение пользователю о том, что заявка успешно отправлена
-        await bot.send_message(chat_id=message.chat.id, text=f"Спасибо! Ваша заявка отправлена.\
-                            Мы свяжемся с Вами в ближайшее время.\n {message_text}")
+        await bot.send_message(chat_id=message.chat.id,\
+                                text=f"Спасибо! Ваша заявка отправлена.\nМы свяжемся с Вами в ближайшее время.\n {message_text}")
         # Завершаем состояние и сбрасываем стейт
         await state.finish()
     else:
         # Если контакт введен некорректно, сообщаем об ошибке
-        await message.reply("Имя и фамилия родителя должны быть указаны через пробел. Пожалуйста, попробуйте еще раз.")
+        await message.reply("Имя и фамилия родителя должны быть указаны через пробел.\nПожалуйста, попробуйте еще раз.")
 
 
 if __name__ == '__main__':
